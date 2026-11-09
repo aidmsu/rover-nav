@@ -1,0 +1,64 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: "1"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "1"
+  NUGET_XMLDOC_MODE: skip
+
+jobs:
+  test:
+    name: test (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: linux-x64
+            os: ubuntu-24.04
+          - target: linux-arm64
+            os: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        env:
+          # A private install directory hides the newer runtimes preinstalled on the runner image.
+          DOTNET_INSTALL_DIR: ${{ runner.temp }}/dotnet
+        with:
+          dotnet-version: 10.0.101
+
+      - name: Build
+        run: dotnet build RoverNav.slnx -c Release
+
+      - name: Navigation tests
+        run: >-
+          dotnet test tests/Amr.Navigation.Tests/Amr.Navigation.Tests.csproj -c Release --no-build
+          --results-directory TestResults
+          --logger "trx;LogFileName=Amr.Navigation.Tests.trx"
+          --logger "console;verbosity=normal"
+
+      - name: Perception tests
+        if: ${{ !cancelled() }}
+        run: >-
+          dotnet test tests/Amr.Perception.Tests/Amr.Perception.Tests.csproj -c Release --no-build
+          --results-directory TestResults
+          --logger "junit;LogFileName=Amr.Perception.Tests.junit.xml"
+          --logger "console;verbosity=normal"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results-${{ matrix.target }}-a${{ github.run_attempt }}
+          path: TestResults/
+          retention-days: 90

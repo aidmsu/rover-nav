@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Amr.Navigation/Amr.Navigation.csproj" />
+    <Project Path="src/Amr.Perception/Amr.Perception.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Amr.Navigation.Tests/Amr.Navigation.Tests.csproj" />
+    <Project Path="tests/Amr.Perception.Tests/Amr.Perception.Tests.csproj" />
+  </Folder>
+</Solution>
