@@ -3,6 +3,10 @@ namespace Amr.Navigation;
 /// <summary>
 /// A 2D occupancy grid. Cells are either free or occupied; everything outside the grid is treated as occupied.
 /// </summary>
+/// <remarks>
+/// Cell (0, 0) is the top-left corner of the map; X grows to the right and Y grows downwards. Cells are stored
+/// row by row, so the cell (x, y) lives at index <c>y * Width + x</c>.
+/// </remarks>
 public sealed class OccupancyGrid
 {
     private readonly bool[] _occupied;
@@ -14,12 +18,16 @@ public sealed class OccupancyGrid
         _occupied = new bool[width * height];
     }
 
+    /// <summary>Number of columns.</summary>
     public int Width { get; }
 
+    /// <summary>Number of rows.</summary>
     public int Height { get; }
 
+    /// <summary>Returns true when the cell lies inside the grid.</summary>
     public bool InBounds(int x, int y) => (uint)x < (uint)Width && (uint)y < (uint)Height;
 
+    /// <summary>Returns true when the cell lies inside the grid and is not occupied.</summary>
     public bool IsFree(int x, int y) => InBounds(x, y) && !_occupied[y * Width + x];
 
     public bool IsFree(GridPoint cell) => IsFree(cell.X, cell.Y);
