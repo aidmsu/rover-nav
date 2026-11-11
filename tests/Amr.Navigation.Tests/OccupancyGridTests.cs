@@ -51,4 +51,15 @@ public class OccupancyGridTests
         Assert.True(grid.HasLineOfSight(new GridPoint(2, 13), new GridPoint(14, 15)));
         Assert.True(grid.HasLineOfSight(new GridPoint(3, 3), new GridPoint(3, 3)));
     }
+
+    [Fact]
+    public void WarehouseKeepsDockingCornersClear()
+    {
+        var grid = OccupancyGrid.CreateWarehouse(128, seed: 7);
+
+        Assert.True(grid.IsFree(0, 0));
+        Assert.True(grid.IsFree(127, 0));
+        Assert.True(grid.IsFree(0, 127));
+        Assert.True(grid.IsFree(127, 127));
+    }
 }
