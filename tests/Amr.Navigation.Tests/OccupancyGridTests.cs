@@ -20,6 +20,15 @@ public class OccupancyGridTests
         }
     }
 
+    [Theory]
+    [InlineData(0, 10)]
+    [InlineData(10, 0)]
+    [InlineData(-4, 4)]
+    public void RejectsNonPositiveDimensions(int width, int height)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new OccupancyGrid(width, height));
+    }
+
     [Fact]
     public void CellsOutsideTheGridAreNotFree()
     {

@@ -13,6 +13,9 @@ public sealed class OccupancyGrid
 
     public OccupancyGrid(int width, int height)
     {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(width);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(height);
+
         Width = width;
         Height = height;
         _occupied = new bool[width * height];
