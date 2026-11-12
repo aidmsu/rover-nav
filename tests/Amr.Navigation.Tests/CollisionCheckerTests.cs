@@ -25,4 +25,14 @@ public class CollisionCheckerTests
 
         Assert.Equal(96, checker.FindFirstCollision(path));
     }
+
+    [Fact]
+    public void RotatedFootprintIsCheckedExactly()
+    {
+        var box = new ConvexPolygon([new Vec2(0.5, 0.5), new Vec2(1.5, 0.5), new Vec2(1.5, 1.5), new Vec2(0.5, 1.5)]);
+        var checker = new CollisionChecker([box], footprintLength: 2.0, footprintWidth: 0.2);
+
+        Assert.False(checker.Collides(new Pose2D(0, 0, -Math.PI / 4)));
+        Assert.True(checker.Collides(new Pose2D(0, 0, Math.PI / 4)));
+    }
 }
