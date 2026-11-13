@@ -35,4 +35,10 @@ public class KdTreeTests
         Assert.Equal(0, tree.FindNearest(new Point2(0, 0), out var distanceSquared));
         Assert.Equal(25, distanceSquared);
     }
+
+    [Fact]
+    public void RejectsEmptyInput()
+    {
+        Assert.Throws<ArgumentException>(() => new KdTree([]));
+    }
 }
