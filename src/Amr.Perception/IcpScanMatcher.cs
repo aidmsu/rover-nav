@@ -27,6 +27,8 @@ public sealed class IcpScanMatcher
     {
         ArgumentNullException.ThrowIfNull(scan);
         if (scan.Count == 0) throw new ArgumentException("The scan has no points.", nameof(scan));
+        if (MaxIterations <= 0) throw new InvalidOperationException($"{nameof(MaxIterations)} must be positive.");
+        if (!(Tolerance > 0)) throw new InvalidOperationException($"{nameof(Tolerance)} must be positive.");
 
         var moved = new Point2[scan.Count];
         var matched = new Point2[scan.Count];

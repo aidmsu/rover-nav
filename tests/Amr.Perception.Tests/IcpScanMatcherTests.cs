@@ -38,4 +38,13 @@ public class IcpScanMatcherTests
         Assert.Equal(1, result.Iterations);
         Assert.Equal(0, result.RootMeanSquareError, 1e-12);
     }
+
+    [Fact]
+    public void RejectsInvalidIterationSettings()
+    {
+        var reference = ScanSimulator.SampleRoom(100, seed: 3);
+
+        Assert.Throws<InvalidOperationException>(() => new IcpScanMatcher(reference) { MaxIterations = 0 }.Match(reference));
+        Assert.Throws<InvalidOperationException>(() => new IcpScanMatcher(reference) { Tolerance = 0 }.Match(reference));
+    }
 }
