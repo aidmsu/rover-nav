@@ -62,4 +62,14 @@ public class OccupancyGridTests
         Assert.True(grid.IsFree(0, 127));
         Assert.True(grid.IsFree(127, 127));
     }
+
+    [Fact]
+    public void CountFreeExcludesFilledRectangles()
+    {
+        var grid = new OccupancyGrid(10, 10);
+        grid.FillRectangle(2, 2, 4, 3);
+        grid.FillRectangle(8, 8, 12, 12);
+
+        Assert.Equal(100 - 6 - 4, grid.CountFree());
+    }
 }

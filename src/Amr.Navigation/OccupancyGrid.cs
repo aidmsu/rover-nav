@@ -45,6 +45,18 @@ public sealed class OccupancyGrid
         _occupied[y * Width + x] = occupied;
     }
 
+    /// <summary>Returns the number of free cells.</summary>
+    public int CountFree()
+    {
+        var free = 0;
+        foreach (var occupied in _occupied)
+        {
+            if (!occupied) free++;
+        }
+
+        return free;
+    }
+
     /// <summary>Marks every cell of the inclusive rectangle as occupied, clipped to the grid.</summary>
     public void FillRectangle(int x0, int y0, int x1, int y1)
     {
