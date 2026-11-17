@@ -23,6 +23,8 @@ public class CollisionCheckerTests
         var checker = new CollisionChecker([box], footprintLength: 0.8, footprintWidth: 0.5);
         var path = Enumerable.Range(0, 200).Select(i => new Pose2D(i * 0.1, 0, 0)).ToList();
 
+        Assert.Equal(0.8, checker.FootprintLength);
+        Assert.Equal(0.5, checker.FootprintWidth);
         Assert.Equal(96, checker.FindFirstCollision(path));
     }
 

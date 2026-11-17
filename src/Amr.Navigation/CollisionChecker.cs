@@ -22,6 +22,12 @@ public sealed class CollisionChecker
 
     public int ObstacleCount => _obstacles.Length;
 
+    /// <summary>Footprint length along the robot heading, in metres.</summary>
+    public double FootprintLength => 2 * _halfLength;
+
+    /// <summary>Footprint width across the robot heading, in metres.</summary>
+    public double FootprintWidth => 2 * _halfWidth;
+
     /// <summary>Returns true when the footprint at the given pose overlaps any obstacle.</summary>
     public bool Collides(Pose2D pose)
     {
