@@ -32,6 +32,18 @@ public class AStarPlannerTests
     }
 
     [Fact]
+    public void StartEqualsGoalGivesSingleCellPath()
+    {
+        var grid = new OccupancyGrid(16, 16);
+
+        var path = new AStarPlanner(grid).FindPath(new GridPoint(5, 7), new GridPoint(5, 7));
+
+        Assert.NotNull(path);
+        Assert.Equal([new GridPoint(5, 7)], path.Cells);
+        Assert.Equal(0, path.Cost);
+    }
+
+    [Fact]
     public void ReturnsNullWhenGoalIsWalledOff()
     {
         var grid = new OccupancyGrid(32, 32);
