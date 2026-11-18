@@ -47,20 +47,17 @@ public sealed class AStarPlanner
         costSoFar[startIndex] = 0;
         cameFrom[startIndex] = -1;
 
+        // Ordered by estimated total cost, then by heuristic: among equally good nodes the one closer to the goal is
+        // expanded first, which keeps the search on the line towards the goal on open floor instead of fanning out.
         var startHeuristic = Heuristic(start.X, start.Y, goal);
-        var open = new List<OpenNode> { new(startIndex, startHeuristic, startHeuristic) };
+        var open = new PriorityQueue<int, (double EstimatedTotal, double Heuristic)>();
+        open.Enqueue(startIndex, (startHeuristic, startHeuristic));
         var expanded = 0;
 
-        while (open.Count > 0)
+        while (open.TryDequeue(out var current, out _))
         {
-            var best = 0;
-            for (var i = 1; i < open.Count; i++)
-            {
-                if (open[i].IsBetterThan(open[best])) best = i;
-            }
-
-            var current = open[best].Index;
-            open.RemoveAt(best);
+            // A node can be queued several times with decreasing cost; only its first (cheapest) entry is expanded.
+            if (closed[current]) continue;
             if (current == goalIndex) return Reconstruct(cameFrom, goalIndex, width, costSoFar[goalIndex], expanded);
 
             closed[current] = true;
@@ -81,28 +78,12 @@ public sealed class AStarPlanner
 
                 costSoFar[next] = tentative;
                 cameFrom[next] = current;
-
-                // Update a node that is already queued instead of queueing it twice.
                 var heuristic = Heuristic(nx, ny, goal);
-                var node = new OpenNode(next, tentative + heuristic, heuristic);
-                var queued = open.FindIndex(n => n.Index == next);
-                if (queued >= 0) open[queued] = node;
-                else open.Add(node);
+                open.Enqueue(next, (tentative + heuristic, heuristic));
             }
         }
 
         return null;
-    }
-
-    /// <summary>
-    /// An open-set entry. Among nodes with equal estimated total cost the one closer to the goal is expanded first,
-    /// which keeps the search on the straight line towards the goal on open floor instead of fanning out.
-    /// </summary>
-    private readonly record struct OpenNode(int Index, double EstimatedTotal, double Heuristic)
-    {
-        public bool IsBetterThan(OpenNode other) =>
-            EstimatedTotal < other.EstimatedTotal ||
-            (EstimatedTotal == other.EstimatedTotal && Heuristic < other.Heuristic);
     }
 
     private static PlannedPath Reconstruct(int[] cameFrom, int goalIndex, int width, double cost, int expanded)
