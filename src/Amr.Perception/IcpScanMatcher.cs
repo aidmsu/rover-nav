@@ -16,9 +16,14 @@ public sealed class IcpScanMatcher
         _index = new KdTree(_reference);
     }
 
+    /// <summary>Upper bound on the number of match-and-align iterations. The result reports whether it converged earlier.</summary>
     public int MaxIterations { get; init; } = 100;
 
-    /// <summary>Iteration stops once the incremental rotation and translation both fall below this value.</summary>
+    /// <summary>
+    /// Iteration stops once the incremental rotation (radians) and translation (metres) both fall below this value.
+    /// Point-to-point ICP only converges to the nearest local minimum, so the initial guess should be within a few
+    /// degrees and a few tens of centimetres of the true transform.
+    /// </summary>
     public double Tolerance { get; init; } = 1e-9;
 
     public IcpResult Match(IReadOnlyList<Point2> scan) => Match(scan, RigidTransform2D.Identity);
