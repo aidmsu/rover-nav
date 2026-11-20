@@ -28,6 +28,18 @@ public class KdTreeTests
     }
 
     [Fact]
+    public void DuplicatePointsAreFoundAtZeroDistance()
+    {
+        var points = Enumerable.Range(0, 64).Select(i => new Point2(i % 4, i % 4)).ToArray();
+        var tree = new KdTree(points);
+
+        var nearest = tree.FindNearest(new Point2(2, 2), out var distanceSquared);
+
+        Assert.Equal(0, distanceSquared);
+        Assert.Equal(new Point2(2, 2), points[nearest]);
+    }
+
+    [Fact]
     public void SinglePointTreeAlwaysReturnsThatPoint()
     {
         var tree = new KdTree([new Point2(3, 4)]);
