@@ -56,7 +56,10 @@ public sealed class CollisionChecker
         return -1;
     }
 
-    /// <summary>Writes the four footprint corners at the pose in counter-clockwise order.</summary>
+    /// <summary>
+    /// Writes the four footprint corners at the pose in counter-clockwise order, starting with the front-left corner.
+    /// The footprint is centred on the pose; its length runs along the heading.
+    /// </summary>
     public void GetFootprint(Pose2D pose, Span<Vec2> corners)
     {
         var (sin, cos) = Math.SinCos(pose.Heading);
