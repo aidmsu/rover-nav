@@ -1,13 +1,12 @@
 namespace Amr.Navigation;
 
 /// <summary>
-/// Checks a rectangular robot footprint against static convex obstacles. Obstacles whose bounding boxes do not
-/// overlap the footprint's bounding box are rejected before the exact separating-axis test.
+/// Checks a rectangular robot footprint against static convex obstacles with an exact separating-axis test on the
+/// obstacle outlines.
 /// </summary>
 public sealed class CollisionChecker
 {
     private readonly ConvexPolygon[] _obstacles;
-    private readonly Aabb[] _bounds;
     private readonly double _halfLength;
     private readonly double _halfWidth;
 
@@ -15,7 +14,6 @@ public sealed class CollisionChecker
     {
         ArgumentNullException.ThrowIfNull(obstacles);
         _obstacles = [.. obstacles];
-        _bounds = [.. _obstacles.Select(o => o.Bounds)];
         _halfLength = footprintLength / 2;
         _halfWidth = footprintWidth / 2;
     }
@@ -33,12 +31,10 @@ public sealed class CollisionChecker
     {
         Span<Vec2> footprint = stackalloc Vec2[4];
         GetFootprint(pose, footprint);
-        var box = Aabb.Of(footprint);
 
-        for (var i = 0; i < _obstacles.Length; i++)
+        foreach (var obstacle in _obstacles)
         {
-            if (!_bounds[i].Overlaps(box)) continue;
-            if (ConvexPolygon.Intersects(footprint, _obstacles[i].Vertices)) return true;
+            if (ConvexPolygon.Intersects(footprint, obstacle.Vertices)) return true;
         }
 
         return false;
