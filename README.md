@@ -24,6 +24,12 @@ var grid = OccupancyGrid.CreateWarehouse(size: 256, seed: 42);
 var path = new AStarPlanner(grid).FindPath(new GridPoint(0, 0), new GridPoint(255, 255));
 Console.WriteLine($"{path?.Cells.Count} cells, length {path?.Cost:F1}");
 
+// Check a sampled path for a 0.8 m x 0.5 m robot against convex obstacles.
+var box = new ConvexPolygon([new Vec2(10, -0.2), new Vec2(11, -0.2), new Vec2(11, 0.2), new Vec2(10, 0.2)]);
+var checker = new CollisionChecker([box], footprintLength: 0.8, footprintWidth: 0.5);
+var poses = Enumerable.Range(0, 200).Select(i => new Pose2D(i * 0.1, 0, 0)).ToList();
+Console.WriteLine($"first collision at pose {checker.FindFirstCollision(poses)}");
+
 // Align a new laser scan with a reference scan.
 var reference = ScanSimulator.SampleRoom(count: 5000, seed: 1);
 var scan = reference.Select(new RigidTransform2D(0.05, 0.2, -0.1).Apply).ToArray();
