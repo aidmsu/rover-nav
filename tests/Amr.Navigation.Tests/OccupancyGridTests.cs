@@ -72,4 +72,15 @@ public class OccupancyGridTests
 
         Assert.Equal(100 - 6 - 4, grid.CountFree());
     }
+
+    [Fact]
+    public void DiagonalLineOfSightPassesThroughAGap()
+    {
+        var grid = new OccupancyGrid(12, 12);
+        grid.FillRectangle(0, 6, 4, 6);
+        grid.FillRectangle(7, 6, 11, 6);
+
+        Assert.True(grid.HasLineOfSight(new GridPoint(1, 1), new GridPoint(10, 10)));
+        Assert.False(grid.HasLineOfSight(new GridPoint(0, 0), new GridPoint(2, 11)));
+    }
 }
