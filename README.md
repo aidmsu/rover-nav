@@ -12,6 +12,9 @@ Used as a showcase repository for PerfGuard AI; CI timings are genuine.
 | `src/Amr.Perception` | 2D `KdTree` for nearest-neighbour queries, point-to-point `IcpScanMatcher`, synthetic `ScanSimulator` |
 | `tests/Amr.Navigation.Tests` | xUnit tests for planning and collision checking |
 | `tests/Amr.Perception.Tests` | xUnit tests for the k-d tree and scan matching |
+| `docs/` | Notes on the [navigation](docs/navigation.md) and [perception](docs/perception.md) code |
+
+Contribution guidelines are in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Usage
 
