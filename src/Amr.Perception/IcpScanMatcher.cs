@@ -7,12 +7,14 @@ namespace Amr.Perception;
 public sealed class IcpScanMatcher
 {
     private readonly Point2[] _reference;
+    private readonly KdTree _index;
 
     public IcpScanMatcher(IReadOnlyList<Point2> reference)
     {
         ArgumentNullException.ThrowIfNull(reference);
         if (reference.Count == 0) throw new ArgumentException("The reference scan has no points.", nameof(reference));
         _reference = [.. reference];
+        _index = new KdTree(_reference);
     }
 
     /// <summary>Upper bound on the number of match-and-align iterations. The result reports whether it converged earlier.</summary>
@@ -62,23 +64,11 @@ public sealed class IcpScanMatcher
         return new IcpResult(estimate, MaxIterations, rmse, Converged: false);
     }
 
-    /// <summary>Returns the index of the reference point closest to <paramref name="point"/>.</summary>
-    private int FindCorrespondence(Point2 point, out double distanceSquared)
-    {
-        var best = 0;
-        distanceSquared = double.PositiveInfinity;
-        for (var i = 0; i < _reference.Length; i++)
-        {
-            var candidate = _reference[i].DistanceSquaredTo(point);
-            if (candidate < distanceSquared)
-            {
-                distanceSquared = candidate;
-                best = i;
-            }
-        }
-
-        return best;
-    }
+    /// <summary>
+    /// Returns the index of the reference point closest to <paramref name="point"/>. Uses the k-d tree index
+    /// (O(log n) per query) — a linear scan here makes every ICP iteration O(scan × reference).
+    /// </summary>
+    private int FindCorrespondence(Point2 point, out double distanceSquared) => _index.FindNearest(point, out distanceSquared);
 
     /// <summary>Closed-form least-squares rigid transform that maps <paramref name="source"/> onto <paramref name="target"/>.</summary>
     private static RigidTransform2D SolveAlignment(Point2[] source, Point2[] target)
